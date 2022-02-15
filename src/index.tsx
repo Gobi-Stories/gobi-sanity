@@ -68,7 +68,7 @@ const customStyling = `
 
     input[type="color"] {
       -webkit-appearance: none;
-      border: none;
+      border: 1px solid black;
       width: 20px;
       height: 20px;
       border-radius: 20px;
@@ -154,7 +154,7 @@ const customStyling = `
 
 const Gobi = React.forwardRef((props: any) => {
   const { value, onChange, PatchEvent, set, unset } = props
-  const [story, setStory] = useState(value?.story || 'ragg9')
+  const [story, setStory] = useState(value?.story || '')
   const [color, setColor] = useState(value?.color || '#15D6EA')
   const [debouncedColorState, setDebouncedColorState] = useState(
     value?.color || '#15D6EA'
@@ -178,7 +178,7 @@ const Gobi = React.forwardRef((props: any) => {
     value?.hideTitle ? value?.hideTitle : true
   )
   const [autoStartWithSound, setStartSound] = useState(
-    value?.startSound ? value?.startSound : true
+    value?.startSound ? value?.startSound : false
   )
   const random = Math.random()
 
@@ -312,12 +312,11 @@ const Gobi = React.forwardRef((props: any) => {
               <div style={{ ...styles.greyText, ...styles.marginRight }}>
                 HEX
               </div>
-              <label
-                htmlFor='input-color'
-                style={{ ...styles.labelInput, ...styles.marginRight }}
-              >
-                {debouncedColorState}
-              </label>
+              <input
+                value={color}
+                onChange={handleColorChange}
+                style={{ ...styles.marginRight }}
+              />
               <input
                 id='input-color'
                 type='color'
@@ -357,12 +356,11 @@ const Gobi = React.forwardRef((props: any) => {
               <div style={{ ...styles.greyText, ...styles.marginRight }}>
                 HEX
               </div>
-              <label
-                htmlFor='input-color'
-                style={{ ...styles.labelInput, ...styles.marginRight }}
-              >
-                {titleFontColor}
-              </label>
+              <input
+                value={titleFontColor}
+                onChange={(ev) => setTitleColor(ev.target.value)}
+                style={{ ...styles.marginRight }}
+              />
               <input
                 type='color'
                 value={titleFontColor}
