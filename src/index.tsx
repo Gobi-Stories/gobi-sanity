@@ -5,65 +5,156 @@ import GobiReact from './GobiReact'
 import gobiSchema from './gobiSchema'
 import GobiSerializer from './GobiSerializer'
 
-const customStyling = `<style>h1,
-  h3,
-  p,
-  div {
-    cursor: default;
-  }
+const customStyling = `
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap')
+    h1,
+    h3,
+    p,
+    div {
+      cursor: default;
+    }
 
-  p {
-    margin: 0;
-  }
+    h3.title {
+      font-family: 'Nunito', sans-serif;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 25px;
+      color: #011C39;
+      margin-bottom: 0;
+    }
 
-  input {
-    border: 1px solid lightblue;
-    width: 60px;
-    border-radius: 9px;
-    padding: 5px 10px;
-    margin-right: 5px;
-  }
+    .subtitle {
+      font-family: 'Nunito', sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 13px;
+      line-height: 18px;
+      color: #6C7689;
+    }
 
-  input.bigInput {
-    width: 120px;
-    margin-right: 0;
-  }
+    p {
+      margin: 0;
+    }
 
-  input[type='checkbox'] {
-    all: unset;
-    border: 1px solid lightblue;
-    height: 15px;
-    width: 15px;
-    border-radius: 5px;
-    margin-right: 20px;
-    cursor: pointer;
-    position: relative;
-  }
+    input {
+      border: 1px solid #BFC6CD;
+      width: 60px;
+      border-radius: 5px;
+      padding: 5px 12px;
 
-  input[type='checkbox']:checked {
-    border: 1px solid lightblue;
-    height: 15px;
-    width: 15px;
-    border-radius: 5px;
-    margin-right: 20px;
-    background: lightblue;
-  }
+      font-family: 'Nunito', sans-serif;
+      font-style: normal;
+      font-weight: normal;
+      font-size: 12px;
+      color: #6C7689;
+    }
 
-  input[type='checkbox']:checked:after {
-    content: '\u2713';
-    color: #fff;
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }</style>`
+    input.bigInput {
+      width: 120px;
+      font-size: 15px;
+    }
+
+    input.unstyled {
+      border: none;
+      width: 40px;
+      border-radius: 0;
+      padding: 0;
+      height: 100%;
+      margin-right: 5px;
+      outline: none;
+    }
+
+    input[type="color"] {
+      -webkit-appearance: none;
+      border: 1px solid black;
+      width: 20px;
+      height: 20px;
+      border-radius: 20px;
+      overflow: hidden;
+      padding: 0 !important;
+    }
+    input[type="color"]::-webkit-color-swatch-wrapper {
+      padding: 0 !important;
+    }
+    input[type="color"]::-webkit-color-swatch {
+      border: none;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 30px;
+      height: 19px;
+      border-box: initial;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ffffff;
+      border: 2px solid #0093FF;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      width: 16px;
+      left: -2px;
+      top: -2px;
+      bottom: -2px;
+      border: 2px solid #0093FF;
+      background-color: white;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    input:checked + .slider {
+      background-color: #0093FF;
+    }
+
+    input:focus + .slider {
+      box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked + .slider:before {
+      -webkit-transform: translateX(26px);
+      -ms-transform: translateX(26px);
+      transform: translateX(10px);
+    }
+
+    /* Rounded sliders */
+    .slider.round {
+      border-radius: 34px;
+    }
+
+    .slider.round:before {
+      border-radius: 50%;
+    }
+
+    input[type="range"] {
+      padding: 0;
+      width: 174px;
+      height: 4px;
+    }
+  </style>`
 
 const Gobi = React.forwardRef((props: any) => {
   const { value, onChange, PatchEvent, set, unset } = props
-  const [story, setStory] = useState(value?.story || 'ragg9')
+  const [story, setStory] = useState(value?.story || '')
   const [color, setColor] = useState(value?.color || '#15D6EA')
   const [debouncedColorState, setDebouncedColorState] = useState(
     value?.color || '#15D6EA'
@@ -84,10 +175,10 @@ const Gobi = React.forwardRef((props: any) => {
     value?.titleFontColor || '#000'
   )
   const [hideTitle, setHideTitle] = useState(
-    value?.hideTitle ? value?.hideTitle : false
+    value?.hideTitle ? value?.hideTitle : true
   )
   const [autoStartWithSound, setStartSound] = useState(
-    value?.startSound ? value?.startSound : true
+    value?.startSound ? value?.startSound : false
   )
   const random = Math.random()
 
@@ -129,8 +220,8 @@ const Gobi = React.forwardRef((props: any) => {
           data-gobi-show-play-icon="${showPlayIcon.toString()}"
           data-gobi-auto-segue="true"
           data-gobi-title-font-color="${titleFontColor}"
-          data-gobi-hide-title="${hideTitle}"
-          data-gobi-auto-start-with-sound="${autoStartWithSound}">
+          data-gobi-hide-title="${!hideTitle}"
+          data-gobi-auto-start-with-sound="${!autoStartWithSound}">
       </div>`
     }
   }, [
@@ -162,15 +253,20 @@ const Gobi = React.forwardRef((props: any) => {
       <div>
         <div style={styles.justifyRow}>
           <div>
-            <h3>Edit Bubbles</h3>
-            <p>Preview of selected stories</p>
+            <h3 className='title'>Edit Bubble</h3>
+            <p className='subtitle'>Preview of selected stories</p>
           </div>
-          <button style={styles.btn}>Reset to Defaults</button>
         </div>
         <div id={`gobi-${random}`} style={styles.gobiCont} />
 
         <div>
-          <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
+          <div
+            style={{
+              ...styles.justifyRow,
+              ...styles.borderBottom,
+              ...styles.borderTop
+            }}
+          >
             <p style={styles.label}>Story ID</p>
             <input
               className='bigInput'
@@ -181,69 +277,120 @@ const Gobi = React.forwardRef((props: any) => {
           </div>
 
           <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
-            <p style={styles.label}>Color</p>
-            <input
-              type='color'
-              value={debouncedColorState}
-              onChange={handleColorChange}
-            />
-          </div>
-
-          <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
             <p style={styles.label}>Bubble Size</p>
-            <div>
+            <input
+              type='range'
+              min='100'
+              max='500'
+              step='1'
+              value={bubbleSize}
+              onChange={(e) => setBubbleSize(parseInt(e.target.value))}
+            />
+            <div
+              style={{
+                ...styles.labelInput,
+                ...styles.labelInputNoWidth,
+                ...styles.flexRow,
+                ...styles.alignEnd
+              }}
+            >
               <input
+                className='unstyled'
                 type='number'
                 value={bubbleSize}
                 onChange={(ev) => setBubbleSize(ev.target.value)}
               />
-              px
+              <div style={{ ...styles.greyText, ...styles.lineHeightUnset }}>
+                px
+              </div>
             </div>
           </div>
 
           <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
-            <p style={styles.label}>Show Animated Bubbles</p>
-            <input
-              type='checkbox'
-              checked={animatedBubble}
-              onChange={() => setAnimated(!animatedBubble)}
-            />
+            <p style={styles.label}>Circle Color</p>
+            <div style={styles.flexRow}>
+              <div style={{ ...styles.greyText, ...styles.marginRight }}>
+                HEX
+              </div>
+              <input
+                value={color}
+                onChange={handleColorChange}
+                style={{ ...styles.marginRight }}
+              />
+              <input
+                id='input-color'
+                type='color'
+                value={debouncedColorState}
+                onChange={handleColorChange}
+              />
+            </div>
           </div>
 
           <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
-            <p style={styles.label}>Show Play Icon</p>
-            <input
-              type='checkbox'
-              checked={showPlayIcon}
-              onChange={() => setPlayIcon(!showPlayIcon)}
-            />
+            <p style={styles.label}>Display as Gif</p>
+            <label className='switch'>
+              <input
+                type='checkbox'
+                checked={animatedBubble}
+                onChange={() => setAnimated(!animatedBubble)}
+              />
+              <span className='slider round' />
+            </label>
+          </div>
+
+          <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
+            <p style={styles.label}>Display Story Name</p>
+            <label className='switch'>
+              <input
+                type='checkbox'
+                checked={hideTitle}
+                onChange={() => setHideTitle(!hideTitle)}
+              />
+              <span className='slider round' />
+            </label>
           </div>
 
           <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
             <p style={styles.label}>Title Font Color</p>
-            <input
-              type='color'
-              value={titleFontColor}
-              onChange={(ev) => setTitleColor(ev.target.value)}
-            />
+            <div style={styles.flexRow}>
+              <div style={{ ...styles.greyText, ...styles.marginRight }}>
+                HEX
+              </div>
+              <input
+                value={titleFontColor}
+                onChange={(ev) => setTitleColor(ev.target.value)}
+                style={{ ...styles.marginRight }}
+              />
+              <input
+                type='color'
+                value={titleFontColor}
+                onChange={(ev) => setTitleColor(ev.target.value)}
+              />
+            </div>
           </div>
 
           <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
-            <p style={styles.label}>Hide Title</p>
-            <input
-              type='checkbox'
-              checked={hideTitle}
-              onChange={() => setHideTitle(!hideTitle)}
-            />
+            <p style={styles.label}>Display Play Icon</p>
+            <label className='switch'>
+              <input
+                type='checkbox'
+                checked={showPlayIcon}
+                onChange={() => setPlayIcon(!showPlayIcon)}
+              />
+              <span className='slider round' />
+            </label>
           </div>
 
           <div style={{ ...styles.justifyRow, ...styles.borderBottom }}>
-            <p style={styles.label}>Auto Start Sound</p>
-            <input
-              type='checkbox'
-              checked={autoStartWithSound}
-              onChange={() => setStartSound(!autoStartWithSound)}
-            />
+            <p style={styles.label}>Start Video Muted</p>
+            <label className='switch'>
+              <input
+                type='checkbox'
+                checked={autoStartWithSound}
+                onChange={() => setStartSound(!autoStartWithSound)}
+              />
+              <span className='slider round' />
+            </label>
           </div>
         </div>
       </div>
@@ -256,6 +403,10 @@ const styles = {
     padding: '1rem',
     height: '100%'
   },
+  flexRow: {
+    display: 'flex',
+    alignItems: 'center'
+  },
   justifyRow: {
     display: 'flex',
     alignSelf: 'stretch',
@@ -263,9 +414,16 @@ const styles = {
     justifyContent: 'space-between',
     marginBottom: '1rem'
   },
+  alignEnd: {
+    alignItems: 'flex-end'
+  },
   borderBottom: {
     paddingBottom: '1rem',
-    borderBottom: '1px solid lightblue'
+    borderBottom: '1.5px solid #CBEAFF'
+  },
+  borderTop: {
+    paddingTop: '1rem',
+    borderTop: '1.5px solid #CBEAFF'
   },
   gobiCont: {
     overflow: 'auto',
@@ -281,7 +439,38 @@ const styles = {
     cursor: 'pointer'
   },
   label: {
-    fontWeight: 700
+    fontFamily: 'Nunito, sans-serif',
+    fontWeight: 400,
+    fontSize: 15,
+    color: '#011C39'
+  },
+  greyText: {
+    fontFamily: 'Nunito, sans-serif',
+    fontWeight: 400,
+    fontSize: 12,
+    color: '#6C7689',
+    lineHeight: 0
+  },
+  marginRight: {
+    marginRight: 8
+  },
+  labelInput: {
+    border: '1px solid #BFC6CD',
+    width: 60,
+    borderRadius: 5,
+    padding: '5px 12px',
+    marginRight: 5,
+
+    fontFamily: 'Nunito, sans-serif',
+    fontWeight: 400,
+    fontSize: 12,
+    color: '#6C7689'
+  },
+  labelInputNoWidth: {
+    width: 'auto'
+  },
+  lineHeightUnset: {
+    lineHeight: 'unset'
   }
 }
 
