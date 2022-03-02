@@ -7,7 +7,7 @@
 ## Install
 
 ```bash
-yarn add @gobistories/gobi-sanity
+yarn add gobi-sanity
 ```
 
 ## Setup Guide
@@ -15,13 +15,13 @@ yarn add @gobistories/gobi-sanity
 ### Step 1
 Install needed dependencie to your sanity project running the following command:
 ```
-$ yarn add @gobistories/gobi-sanity
+$ yarn add gobi-sanity
 ```
 
 ### Step 2
 Now lets create a new schema type called gobi, for this create a new file inside the `schemas/` folder with the name `gobi.js` that should look like 
 ```js
-import {gobiSchema} from '@gobistories/gobi-sanity'
+import {gobiSchema} from 'gobi-sanity'
 import PatchEvent, {set, unset} from 'part:@sanity/form-builder/patch-event'
 
 export default gobiSchema({PatchEvent, set, unset})
@@ -49,7 +49,7 @@ export default createSchema({
 ### Step 4
 Now that we have our schema type created and we've already configured how it should look like we need to create the serializer that will basically translate the schema into a component on your website, for that open the file `web/components/serializers.js` and include the following:
 ```js
-import {GobiSerializer} from "@gobistories/gobi-sanity";
+import {GobiSerializer} from "gobi-sanity";
 
 // ...
 
