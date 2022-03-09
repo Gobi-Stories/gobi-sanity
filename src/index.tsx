@@ -220,7 +220,7 @@ const Gobi = React.forwardRef((props: any) => {
           data-gobi-show-play-icon="${showPlayIcon.toString()}"
           data-gobi-auto-segue="true"
           data-gobi-title-font-color="${titleFontColor}"
-          data-gobi-hide-title="${!hideTitle}"
+          data-gobi-hide-title="${hideTitle}"
           data-gobi-auto-start-with-sound="${!autoStartWithSound}">
       </div>`
     }
